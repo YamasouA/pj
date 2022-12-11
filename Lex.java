@@ -22,7 +22,7 @@ class Token {
 }
 
 public class Lex {
-    public static void lex(String str) {
+    public static Token lex(String str) {
         Token tok = new Token(STRUCTUAL.HEAD, "", null);
         Token head = tok;
         STRUCTUAL type;
@@ -34,7 +34,8 @@ public class Lex {
             System.out.println(str);
             type = peek(str.charAt(0));
             if (type != STRUCTUAL.VAL) {
-                new_tok = new Token(type, "", null);
+                contents = str.substring(0, 1);
+                new_tok = new Token(type, contents, null);
                 str = str.substring(1);
             }
             else {
@@ -47,6 +48,7 @@ public class Lex {
             tok = tok.next;
         }
         print_list(head);
+        return tok;
     }
 
     public static void print_list(Token tok) {

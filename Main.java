@@ -1,5 +1,6 @@
 public class Main {
     public static void main(String[] args) {
-        Lex.lex("{[contents: val]}");
+        Token tok = Lex.lex("{[contents: val]}");
+        Result res = Parse.parse(tok, true);
     }
 }
