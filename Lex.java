@@ -48,7 +48,7 @@ public class Lex {
             tok = tok.next;
         }
         print_list(head);
-        return tok;
+        return head;
     }
 
     public static void print_list(Token tok) {

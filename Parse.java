@@ -1,67 +1,108 @@
 import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
-class Result {
+class Ret {
+    Obj obj;
+    Token tok;
+}
+class Obj {
     String key;
-    Result value;
-    String val;
-    Result(String contents) {
-        this.val = contents;
-    }
-    Result() {
+    static Value val;
+    Map<String, Value> m;
+}
 
+class Value {
+    String str;
+    int num;
+    Obj obj;
+    List<String> arr;
+    boolean bool;
+    boolean is_null;
+    Value(String str) {
+        this.str = str;
     }
 }
 
 public class Parse {
-    public static Result parse(Token tok, boolean is_root) {
+    static Token tok;
+    public static Obj parse(Token tok1, boolean is_root) {
+        tok = tok1;
         STRUCTUAL type = tok.type;
         if (is_root && type != STRUCTUAL.LEFT_CBRACKET) {
             System.out.println("Error");
-            return new Result();
         }
-        if (type == STRUCTUAL.LEFT_CBRACKET)
-            return parse_object(tok.next);
-        else if (type == STRUCTUAL.LEFT_SBRACKET)
-            return parse_object(tok.next);
-        else {
-            Result contents = new Result(tok.contents);
+        if (type == STRUCTUAL.LEFT_CBRACKET) {
+//            return parse_object(tok.next);
             tok = tok.next;
-            return contents;
+            return parse_object();
         }
+        else if (type == STRUCTUAL.LEFT_SBRACKET) {
+//            return parse_array(tok.next);
+        }
+//        else {
+//            Map<String, Result> contents = new HashMap();
+//            contents.put(tok.contents);
+//            tok = tok.next;
+//            return contents;
+//        }
+        return new Obj();
     }
 
-    public static Result parse_object(Token tok) {
-        STRUCTUAL type = tok.type;
-        Result json_obj = new Result();
-        if (type == STRUCTUAL.RIGHT_CBRACKET){
+    public static boolean consume(STRUCTUAL type) {
+        System.out.println("consume " + tok.type);
+        if (tok.type == type){
             tok = tok.next;
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean peak(Token tok, STRUCTUAL type) {
+        System.out.println("peak: " + tok.type);
+        if (tok.type == type)
+            return true;
+        return false;
+    }
+
+    public static Value parse_type(Token tok) {
+        return new Value(tok.contents);
+    }
+
+//    public static Obj parse_object(Token tok) {
+public static Obj parse_object() {
+        Obj json_obj = new Obj();
+//        Ret ret = new Ret();
+        if (tok.type == STRUCTUAL.RIGHT_CBRACKET)
+//            return ret;
             return json_obj;
-        }
-
-        String json_key;
         while (true) {
-            json_key = tok.contents;
+            String key = tok.contents;
+            System.out.println("key: " + tok.contents);
             tok = tok.next;
-            if (tok.type != STRUCTUAL.COLON) {
+            System.out.println("contents1: " + tok.contents);
+            if (!consume(STRUCTUAL.COLON)) {
                 System.out.println("ERROR");
-                return (json_obj);
+//                ret.obj = json_obj;
+//                ret.tok = tok;
+//                return ret;
+                return json_obj;
             }
-            Result json_value = parse(tok.next, false);
-            json_obj.key = json_key;
-            json_obj.value = json_value;
-            type = tok.type;
-            if (type == STRUCTUAL.RIGHT_CBRACKET) {
+            System.out.println("contents2: " + tok.contents);
+            Value val = parse_type(tok);
+            json_obj.key = key;
+            json_obj.val = val;
+            tok = tok.next;
+            if (peak(tok, STRUCTUAL.RIGHT_CBRACKET)) {
                 tok = tok.next;
-                return json_obj;
-            } else if (type != STRUCTUAL.COMMA) {
-                System.out.println("ERROR");
+//                ret.obj = json_obj;
+//                ret.tok = tok;
+//                return ret;
                 return json_obj;
             }
-            tok = tok.next;
         }
+
     }
 
-    public static Result parse_array(Token tok) {
-        return ;
-    }
 }
