@@ -14,12 +14,19 @@ public class Main {
 
             line = br.readLine();
             while (line != null) {
+                if (line.charAt(0) == '/' && line.charAt(1) == '/'){
+                    line = br.readLine();
+                    continue;
+                }
                 System.out.println("===== input: " + line + " =====");
                 Token tok = Lex.lex(line);
 //            System.out.println("=======================");
                 Obj res = Parse.parse(tok.next, true);
+                show_obj(res, 0);
 //            System.out.println("=======================");
                 line = br.readLine();
+
+
             }
         } catch (IOException e) {
             System.out.println(e);
@@ -27,13 +34,18 @@ public class Main {
 
     }
 
-    public void show_obj(Obj obj) {
+    public static void show_obj(Obj obj, int indentSize) {
 
+        for (int i = 0; i < indentSize; i++)
+            System.out.print(" ");
         System.out.println("key: " + obj.key);
-        if (Obj.val.str != null)
-            System.out.println("val: " + obj.val);
-        else {
-            show_obj(obj.val.obj);
+        if (obj.val.str != null) {
+            for (int i = 0; i < indentSize; i++)
+                System.out.print(" ");
+            System.out.println("val: " + obj.val.str);
+        } else {
+            if (obj.val.obj != null)
+                show_obj(obj.val.obj, indentSize+2);
         }
     }
 }

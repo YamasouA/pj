@@ -31,7 +31,12 @@ public class Lex {
         int i;
 
         while (str.length() > 0) {
-            System.out.println(str);
+//            System.out.println(str);
+            if (str.charAt(0) == ' ') {
+                str = str.substring(1);
+                continue;
+            }
+
             type = peek(str.charAt(0));
             if (type != STRUCTUAL.VAL) {
                 contents = str.substring(0, 1);
@@ -47,7 +52,7 @@ public class Lex {
             tok.next = new_tok;
             tok = tok.next;
         }
-        print_list(head);
+//        print_list(head);
         return head;
     }
 

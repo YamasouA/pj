@@ -9,7 +9,7 @@ class Ret {
 }
 class Obj {
     String key;
-    static Value val;
+    Value val;
     Map<String, Value> m;
 }
 
@@ -23,6 +23,7 @@ class Value {
     Value(String str) {
         this.str = str;
     }
+    Value() { this.str = null; this.obj=null; }
 }
 
 public class Parse {
@@ -51,7 +52,7 @@ public class Parse {
     }
 
     public static boolean consume(STRUCTUAL type) {
-        System.out.println("consume " + tok.type);
+//        System.out.println("consume " + tok.type);
         if (tok.type == type){
             tok = tok.next;
             return true;
@@ -60,49 +61,52 @@ public class Parse {
     }
 
     public static boolean peak(Token tok, STRUCTUAL type) {
-        System.out.println("peak: " + tok.type);
+//        System.out.println("peak: " + tok.type);
+        if (tok == null)
+            return false;
         if (tok.type == type)
             return true;
         return false;
     }
 
     public static Value parse_type(Token tok) {
-        return new Value(tok.contents);
+        Value val = new Value();
+        if (tok.type == STRUCTUAL.LEFT_CBRACKET) {
+            val.obj = parse(tok, false);
+        } else if (tok.type == STRUCTUAL.VAL) {
+            val.str = new String(tok.contents);
+        }
+        return val;
     }
-
+    public static Value parse_value(Token tok) {
+        Value val= new Value();
+        val.obj = parse(tok ,false);
+        return val;
+    }
 //    public static Obj parse_object(Token tok) {
-public static Obj parse_object() {
+    public static Obj parse_object() {
         Obj json_obj = new Obj();
-//        Ret ret = new Ret();
+        Value val = new Value();
         if (tok.type == STRUCTUAL.RIGHT_CBRACKET)
-//            return ret;
             return json_obj;
-        while (true) {
+        while (tok != null) {
             String key = tok.contents;
-            System.out.println("key: " + tok.contents);
             tok = tok.next;
-            System.out.println("contents1: " + tok.contents);
             if (!consume(STRUCTUAL.COLON)) {
                 System.out.println("ERROR");
-//                ret.obj = json_obj;
-//                ret.tok = tok;
-//                return ret;
                 return json_obj;
             }
-            System.out.println("contents2: " + tok.contents);
-            Value val = parse_type(tok);
+            val = parse_type(tok);
+
             json_obj.key = key;
             json_obj.val = val;
-            tok = tok.next;
-            if (peak(tok, STRUCTUAL.RIGHT_CBRACKET)) {
+            if (tok != null)
                 tok = tok.next;
-//                ret.obj = json_obj;
-//                ret.tok = tok;
-//                return ret;
+            if (peak(tok, STRUCTUAL.RIGHT_CBRACKET)) {
                 return json_obj;
             }
         }
-
+        return json_obj;
     }
 
 }
