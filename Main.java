@@ -10,7 +10,8 @@ public class Main {
         String line = null;
         try {
 //            f = new File("only-obj");
-            f = new File("only-arr");
+//            f = new File("only-arr");
+            f = new File("mix-obj-arr");
             br = new BufferedReader(new FileReader(f));
 
             line = br.readLine();
@@ -36,7 +37,7 @@ public class Main {
     }
 
     public static void show_obj(Obj obj, int indentSize) {
-        System.out.println("hoge");
+//        System.out.println("hoge");
         for (int i = 0; i < indentSize; i++)
             System.out.print(" ");
         System.out.println("key: " + obj.key);
@@ -45,9 +46,16 @@ public class Main {
                 System.out.print(" ");
             System.out.println("val: " + obj.val.str);
         } else if (obj.val.arr != null) {
-
             for (Value v: obj.val.arr) {
-                System.out.println(v.str);
+                if (v.str != null) {
+                    for (int i = 0; i < indentSize; i++)
+                        System.out.print(" ");
+                    System.out.println(v.str);
+                }
+                else {
+                    System.out.println("key: " + v.obj.key);
+                    System.out.println("val: " + v.obj.val.str);
+                }
             }
         } else {
             if (obj.val.obj != null)

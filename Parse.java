@@ -83,9 +83,11 @@ public class Parse {
 
     public static Value parse_type(Token tok) {
         Value val = new Value();
-        if (tok.type == STRUCTUAL.LEFT_CBRACKET) {
+//        if (tok.type == STRUCTUAL.LEFT_CBRACKET) {
+        if (peak(tok, STRUCTUAL.LEFT_CBRACKET) || peak(tok, STRUCTUAL.LEFT_SBRACKET)) {
             val.obj = parse(tok, false);
-        } else if (tok.type == STRUCTUAL.VAL) {
+//        } else if (tok.type == STRUCTUAL.VAL) {
+        } else if (peak(tok, STRUCTUAL.VAL)) {
             val.str = new String(tok.contents);
         }
         return val;
@@ -102,11 +104,11 @@ public class Parse {
         while (tok != null) {
             if (peak(tok, STRUCTUAL.RIGHT_SBRACKET))
                 return arr;
-            if (peak(tok, STRUCTUAL.VAL)) {
-                arr.add(parse_type(tok));
-                if (tok != null)
-                    tok = tok.next;
-            }
+//            if (peak(tok, STRUCTUAL.VAL)) {
+            arr.add(parse_type(tok));
+            if (tok != null)
+                tok = tok.next;
+//            }
             consume(STRUCTUAL.COMMA);
 //            if (!consume(STRUCTUAL.COMMA)) {
 ////                System.out.println("ERROR");
